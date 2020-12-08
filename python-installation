@@ -4,3 +4,6 @@ sudo apt-get install python3-pip
 sudo apt-get install python3-pip
 sudo pip3 install -Iv pep8==1.7.0
 pep8 --version
+sudo apt update
+sudo apt install git
+git --version
