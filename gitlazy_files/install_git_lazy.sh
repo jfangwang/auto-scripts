@@ -1,4 +1,4 @@
 #!/bin/bash
 cp git-lazypushog git-lazypush
-chmod git-lazypush +x
+chmod +x git-lazypush
 sudo mv git-lazypush /bin/
