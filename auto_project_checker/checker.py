@@ -11,6 +11,7 @@ from selenium.webdriver.chrome.options import Options
 from datetime import date
 import time
 
+
 def run_checker(user, passwd):
     # Credentials
     username = user
@@ -18,14 +19,38 @@ def run_checker(user, passwd):
 
     # get the path of ChromeDriverServer
     PATH = os.getcwd() + '\\auto_project_checker\\chromedriver.exe'
-    print(PATH)
-    PROJ_NUM = str(input("Enter project's URL or project number: "))
-    URL = "https://intranet.hbtn.io/projects/" + PROJ_NUM
+
+    # Fetch Saved Project Number
+    pre_url = "https://intranet.hbtn.io/projects/"
+    PROJ_NUM = ''
+    try:
+        with open("holberton_login.txt", mode='r', encoding='utf-8') as f:
+            read = f.read().splitlines()
+            try:
+                PROJ_NUM = read[2]
+                if PROJ_NUM == '':
+                    PROJ_NUM = str(input("Enter project's URL or project number: "))
+                    print("The script will assume you want to check this project everytime you run it today. This value will reset at midnight.")
+            except:
+                PROJ_NUM = str(input("Enter project's URL or project number: "))
+                print("The script will assume you want to check this project everytime you run it today. This value will reset at midnight.")
+            if pre_url not in PROJ_NUM:
+                PROJ_NUM = pre_url + PROJ_NUM
+    except:
+        PROJ_NUM = str(input("Enter project's URL or project number: "))
+        if pre_url not in PROJ_NUM:
+                    PROJ_NUM = pre_url + PROJ_NUM
+
+    # Save info to login file
+    with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
+        f.write(username + '\n' + password + '\n' + PROJ_NUM)
+
     HOME = "https://intranet.hbtn.io/"
+    URL = PROJ_NUM
     # create a new Chrome session
     options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--disable-gpu')
+    # options.add_argument('--headless')
+    # options.add_argument('--disable-gpu')
     driver = webdriver.Chrome(executable_path=PATH, chrome_options=options)
     # driver.implicitly_wait(30)
     # driver.maximize_window()
@@ -38,7 +63,7 @@ def run_checker(user, passwd):
     password_text = driver.find_element_by_id("user_password")
 
     # Enter Login
-    print("Attempting to log into " + username)
+    print("Attempting to login as " + username)
     username_text.clear()
     username_text.send_keys(username)
     password_text.clear()
@@ -67,7 +92,7 @@ def run_checker(user, passwd):
         project_page = driver.find_element_by_xpath("//article")
         project_name = project_page.find_element_by_xpath("//h1")
     except:
-        print("Project number " + PROJ_NUM + " does not exist")
+        print("Project " + PROJ_NUM + " is not a project")
         driver.quit()
         exit(1)
     try:
@@ -98,7 +123,7 @@ def run_checker(user, passwd):
             close_button.click()
             # print("close button clicked")
             b = "Running Tests [" + "." * count + " " * (len(header) - count - 1) + "]"
-            print (b, end="\r")
+            print(b, end="\r")
         print("\nRan {:s} tests".format(str(count)))
     else:
         print("This is a weird webpage, developer must write better code and optimize me.")
@@ -113,6 +138,6 @@ def run_checker(user, passwd):
     # for a in range(0, len(grade_percent)):
     #     print(grade_percent[a].text)
     #     print("Project {}: {}".format(project_name[a].text, grade_percent[a].text))
-    time.sleep(5)
+
+    time.sleep(2)
     driver.quit()
-    print("Bye Bye!")
