@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
+from datetime import date
 import time
 
 def run_checker(user, passwd):
@@ -16,7 +17,8 @@ def run_checker(user, passwd):
     password = passwd
 
     # get the path of ChromeDriverServer
-    PATH = "./chromedriver.exe"
+    PATH = os.getcwd() + '\\auto_project_checker\\chromedriver.exe'
+    print(PATH)
     PROJ_NUM = str(input("Enter project's URL or project number: "))
     URL = "https://intranet.hbtn.io/projects/" + PROJ_NUM
     HOME = "https://intranet.hbtn.io/"
@@ -24,7 +26,7 @@ def run_checker(user, passwd):
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
-    driver = webdriver.Chrome(PATH, chrome_options=options)
+    driver = webdriver.Chrome(executable_path=PATH, chrome_options=options)
     # driver.implicitly_wait(30)
     # driver.maximize_window()
 
@@ -50,7 +52,12 @@ def run_checker(user, passwd):
         WebDriverWait(driver, timeout).until(element_present)
     except TimeoutException:
         print("Invalid Credentials")
+        username = input("Re-enter Username: ")
+        password = input("Re-enter Password: ")
+        with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
+            f.write(username + '\n' + password + '\n')
         driver.quit()
+        run_checker(username, password)
         exit(1)
 
     print("\nLOGIN SUCCESSFUL\n")

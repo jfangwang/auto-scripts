@@ -1,12 +1,17 @@
 #!/usr/bin/python3
 from checker import run_checker
 # Retrieving Email and Password
+substring = "@holbertonschool.com"
 try:
     with open("holberton_login.txt", mode='r', encoding='utf-8') as openfile:
         read = openfile.read().splitlines()
         try:
             username = read[0]
-            print("Found username")
+            if substring not in username and username != '':
+                print("Username invalid")
+                username = input("Enter Holberton Email: ")
+            else:
+                print("Found username")
         except:
             username = input("Enter Holberton Email: ")
         try:
@@ -14,6 +19,8 @@ try:
             print("Found password")
         except:
             password = input("Enter Password: ")
+        with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
+            f.write(username + '\n' + password + '\n')
 except:
     welcome = "\nWelcome to auto project checker! Project was created so you\
     can run the checker without clicking the 'Check code button' everytime.\
