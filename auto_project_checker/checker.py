@@ -18,8 +18,8 @@ def run_checker(user, passwd):
     password = passwd
 
     # get the path of ChromeDriverServer
-    PATH = os.getcwd() + '\\auto_project_checker\\chromedriver.exe'
-
+    # PATH = os.getcwd() + '\\auto_project_checker\\chromedriver.exe'
+    PATH = './chromedriver'
     # Fetch Saved Project Number
     pre_url = "https://intranet.hbtn.io/projects/"
     PROJ_NUM = ''
@@ -137,8 +137,8 @@ def run_checker(user, passwd):
                 commit_id = result_box.find_elements_by_tag_name("code")[0].text
             total_temp = 0
             earned_temp = 0
-            check_mark = "✔️"
-            x_mark = "❌"
+            check_mark = "[+]"
+            x_mark = "[-]"
 
             for num in range(0, len(req_box)):
                 total_temp += 1
