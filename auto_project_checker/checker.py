@@ -129,7 +129,11 @@ def run_checker(user, passwd):
             print(task_card[count].find_element_by_class_name("panel-title").text, end='     ')
             print("*"+task_card[count].find_element_by_class_name("label").text.upper()+"*")
             check_code_button[count].click()
-            wait.until(EC.visibility_of(start_test_button[count]))
+            try:
+                wait.until(EC.visibility_of(start_test_button[count]))
+            except:
+                print("[DEBUG] Skipping this task, checker is taking too long to load...")
+                pass
             result_box = task_box[count].find_element_by_class_name("result")
             req_box = result_box.find_elements_by_class_name("requirement")
             check_box = result_box.find_elements_by_class_name("code")
