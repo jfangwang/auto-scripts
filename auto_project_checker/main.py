@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from checker import run_checker
+import os, sys
 # Retrieving Email and Password
 substring = "@holbertonschool.com"
 try:
@@ -32,7 +33,7 @@ except:
     " You have the option to enter your holberton credentials which will"
     " be saved in another file named 'holberton_login.txt'. As long as this "
     "file exists at the root directory, you should be good to go running this"
-    " script.If you DO NOT want your credentials saved, just press enter when"
+    " script. If you DO NOT want your credentials saved, just press enter when"
     " prompted.\n")
     print(welcome)
     username = input("Holberton Email: ")
