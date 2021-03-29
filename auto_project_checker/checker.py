@@ -99,45 +99,90 @@ def run_checker(user, passwd):
         print("Project selected: " + project_name.text + "\n")
     except:
         print("Could not get project name...\n")
-
     check_code_button = driver.find_elements_by_xpath("//button[contains(text(),'Check your code')]")
-    header = driver.find_elements_by_class_name("task_correction_modal")
+    task_box = driver.find_elements_by_class_name("task_correction_modal")
+    task_card = driver.find_elements_by_class_name("task-card")
     start_test_button = driver.find_elements_by_xpath("//button[contains(text(),'Start a new test')]")
+    wait = WebDriverWait(driver, timeout=10)
 
     # Check if all tasks can check code, start test, and close the task.
 
-    if len(check_code_button) == len(header) == len(start_test_button):
-
+    # ONLY WORKS IF QA REVIEW IS FULLY AUTOMATED
+    if len(check_code_button) == len(task_box) == len(start_test_button) == len(task_card):
         for count in range(0, len(start_test_button)):
-            # Temporary, have to implement WebDriverWait() for faster performance
-            sleep_num = 0.5
-            driver.implicitly_wait(sleep_num)
-            time.sleep(sleep_num)
             check_code_button[count].click()
-            # print("check code button clicked")
-            driver.implicitly_wait(sleep_num)
-            time.sleep(sleep_num)
+            wait.until(EC.visibility_of(start_test_button[count]))
             start_test_button[count].click()
-            # print("start test button clicked")
-            close_button = header[count].find_element_by_class_name('close')
+            close_button = task_box[count].find_element_by_class_name('close')
             close_button.click()
-            # print("close button clicked")
-            b = "Running Tests [" + "." * count + " " * (len(header) - count - 1) + "]"
+            wait.until(EC.invisibility_of_element(close_button))
+            b = "Running Tests [" + "." * count + " " * (len(task_box) - count - 1) + "]"
             print(b, end="\r")
-        print("\nRan {:s} tests".format(str(count)))
+        print("\nRan {:s} tests".format(str(len(start_test_button))))
+
+        total = 0
+        earned = 0
+        commit_id = "N/A"
+
+    # Check running tests
+        for count in range(0, len(task_box)):
+            print(task_card[count].find_element_by_class_name("panel-title").text, end='     ')
+            print("*"+task_card[count].find_element_by_class_name("label").text.upper()+"*")
+            check_code_button[count].click()
+            wait.until(EC.visibility_of(start_test_button[count]))
+            result_box = task_box[count].find_element_by_class_name("result")
+            req_box = result_box.find_elements_by_class_name("requirement")
+            check_box = result_box.find_elements_by_class_name("code")
+            if count == 0:
+                commit_id = result_box.find_elements_by_tag_name("code")[0].text
+            total_temp = 0
+            earned_temp = 0
+            check_mark = "✔️"
+            x_mark = "❌"
+
+            for num in range(0, len(req_box)):
+                total_temp += 1
+                class_names = req_box[num].get_attribute("class")
+                if "success" in class_names:
+                    earned_temp += 1
+                    print("{}:{}  ".format(req_box[num].text, check_mark), end='')
+                elif "fail" in class_names:
+                    print("{}:{}  ".format(req_box[num].text, x_mark), end='')
+                else:
+                    print("unknown")
+            if total_temp > 0:
+                print()
+            for num in range(0, len(check_box)):
+                total_temp += 1
+                class_names = check_box[num].get_attribute("class")
+                if "success" in class_names:
+                    earned_temp += 1
+                    print("{}:{}  ".format(check_box[num].text, check_mark), end='')
+                elif "fail" in class_names:
+                    print("{}:{}  ".format(check_box[num].text, x_mark), end='')
+                else:
+                    print("unknown")
+            if total_temp > 0:
+                print()
+            print()
+            total += total_temp
+            earned += earned_temp
+            close_button = task_box[count].find_element_by_class_name('close')
+            close_button.click()
+            wait.until(EC.invisibility_of_element(close_button))
+        print("Check: {}/{}".format(earned, total))
+        print("Used commit id: " + commit_id)
+        # print("grades")
+
+        # driver.get(HOME)
+
+        # grade_percent = project_page.find_elements_by_class_name("project_progress_percentage")
+        # project_name = project_page.find_elements_by_tag_name("code")
+
+        # for a in range(0, len(grade_percent)):
+        #     print(grade_percent[a].text)
+        #     print("Project {}: {}".format(project_name[a].text, grade_percent[a].text))
     else:
-        print("This is a weird webpage, developer must write better code and optimize me.")
-
-    # print("grades")
-
-    # driver.get(HOME)
-
-    # grade_percent = project_page.find_elements_by_class_name("project_progress_percentage")
-    # project_name = project_page.find_elements_by_tag_name("code")
-
-    # for a in range(0, len(grade_percent)):
-    #     print(grade_percent[a].text)
-    #     print("Project {}: {}".format(project_name[a].text, grade_percent[a].text))
-
+        print("Checker is not out yet silly.")
     time.sleep(2)
     driver.quit()
