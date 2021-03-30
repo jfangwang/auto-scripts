@@ -14,8 +14,6 @@ import time
 
 
 def run_checker(user, passwd):
-    # Tracking runtime
-    start_time = datetime.now()
     # Credentials
     username = user
     password = passwd
@@ -96,6 +94,9 @@ def run_checker(user, passwd):
         password = input("Enter Password: ")
         save = False
 
+    # Tracking runtime
+    start_time = datetime.now()
+
     # Enter Login
     print("Attempting to login as " + username)
     username_text.clear()
@@ -140,8 +141,8 @@ def run_checker(user, passwd):
     start_test_button = driver.find_elements_by_xpath("//button[contains(text(),'Start a new test')]")
     wait = WebDriverWait(driver, timeout=10)
 
-    end_time = datetime.now()
-    runtime = end_time - start_time
+    before_tests_time = datetime.now()
+    login_time = before_tests_time - start_time
     # Check if all tasks can check code, start test, and close the task. testing...
     # ONLY WORKS IF QA REVIEW IS FULLY AUTOMATED
     if len(check_code_button) == len(task_box) == len(start_test_button) == len(task_card):
@@ -228,8 +229,13 @@ def run_checker(user, passwd):
     else:
         print("Checker is not out yet silly.")
     end_time = datetime.now()
+    check_tests_time = end_time - before_tests_time
     runtime = end_time - start_time
-    print("This script ran in", str(runtime.total_seconds()) + " seconds.")
+
+    print("This script ran in {} seconds. Took {}s to login, {}s to check the results".format(str(runtime.total_seconds()),
+                                                                                              str(login_time.total_seconds()),
+                                                                                              str(check_tests_time.total_seconds())
+                                                                                              ))
     print()
     time.sleep(10)
     driver.quit()
