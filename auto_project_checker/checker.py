@@ -67,16 +67,17 @@ def run_checker(user, passwd):
     URL = PROJ_NUM
     # create a new Chrome session
     options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--disable-gpu')
+    # options.add_argument('--headless')
+    # options.add_argument('--disable-gpu')
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
+        print("Chrome driver found on Linux machine.")
     except:
-        ("Guessing you are running this on windows")
         try:
             driver = webdriver.Chrome(executable_path=PATH_win, chrome_options=options)
+            print("Chrome driver found on Windows machine")
         except:
-            ("Check if chromedriver is in this directory")
+            print("Check if chromedriver or chromedriver.exe is in this directory")
             exit(1)
     # driver.implicitly_wait(30)
     # driver.maximize_window()
@@ -139,8 +140,9 @@ def run_checker(user, passwd):
     start_test_button = driver.find_elements_by_xpath("//button[contains(text(),'Start a new test')]")
     wait = WebDriverWait(driver, timeout=10)
 
-    # Check if all tasks can check code, start test, and close the task.
-
+    end_time = datetime.now()
+    runtime = end_time - start_time
+    # Check if all tasks can check code, start test, and close the task. testing...
     # ONLY WORKS IF QA REVIEW IS FULLY AUTOMATED
     if len(check_code_button) == len(task_box) == len(start_test_button) == len(task_card):
         for count in range(0, len(start_test_button)):
@@ -229,5 +231,5 @@ def run_checker(user, passwd):
     runtime = end_time - start_time
     print("This script ran in", str(runtime.total_seconds()) + " seconds.")
     print()
-    time.sleep(2)
+    time.sleep(10)
     driver.quit()
