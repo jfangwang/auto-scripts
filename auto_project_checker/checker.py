@@ -65,8 +65,8 @@ def run_checker(user, passwd):
     URL = PROJ_NUM
     # create a new Chrome session
     options = Options()
-    # options.add_argument('--headless')
-    # options.add_argument('--disable-gpu')
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
         print("Chrome driver found on Linux machine.")
@@ -157,20 +157,23 @@ def run_checker(user, passwd):
             print(b, end="\r")
         print("\nRan {:s} tests".format(str(len(start_test_button))))
 
-        total = 0
-        earned = 0
+        task_type = "mandatory"
+        man_total = 0
+        man_earned = 0
+        adv_total = 0
+        adv_earned = 0
         commit_id = "N/A"
 
-    # Check running tests
-    #Going through each task
+    # Check running tests, going through each task
         for count in range(0, len(task_box)):
             print(task_card[count].find_element_by_class_name("panel-title").text, end='     ')
-            print("*"+task_card[count].find_element_by_class_name("label").text.upper()+"*")
+            task_type = task_card[count].find_element_by_class_name("label").text
+            print("*"+task_type.upper()+"*")
             check_code_button[count].click()
             try:
                 wait.until(EC.visibility_of(start_test_button[count]))
             except:
-                print("[DEBUG] Skipping this task, checker is taking too long to load...")
+                print("[DEBUG] Dipping out, checker is taking too long to load...")
                 pass
             result_box = task_box[count].find_element_by_class_name("result")
             req_box = result_box.find_elements_by_class_name("requirement")
@@ -208,13 +211,23 @@ def run_checker(user, passwd):
                     print("unknown")
             if total_temp > 0:
                 print()
+            if "mandatory" in task_type:
+                man_total += total_temp
+                man_earned += earned_temp
+            else:
+                adv_total += total_temp
+                adv_earned += earned_temp
+            if earned_temp != total_temp:
+                print("**Missing {:d}**".format(total_temp - earned_temp))
+            else:
+                print("All good!")
             print()
-            total += total_temp
-            earned += earned_temp
             close_button = task_box[count].find_element_by_class_name('close')
             close_button.click()
             wait.until(EC.invisibility_of_element(close_button))
-        print("Check: {}/{}".format(earned, total))
+        print("Mandatory: {}/{}".format(man_earned, man_total))
+        print("Advanced: {}/{}".format(adv_earned, adv_total))
+        print("Check: {:d}/{:d}".format(man_earned + adv_earned, man_total + adv_total))
         print("Used commit id: " + commit_id)
         # print("grades")
 
@@ -237,5 +250,5 @@ def run_checker(user, passwd):
                                                                                               str(check_tests_time.total_seconds())
                                                                                               ))
     print()
-    time.sleep(10)
+    # time.sleep(15)
     driver.quit()
