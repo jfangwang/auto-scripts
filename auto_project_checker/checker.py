@@ -65,8 +65,8 @@ def run_checker(user, passwd):
     URL = PROJ_NUM
     # create a new Chrome session
     options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--disable-gpu')
+    # options.add_argument('--headless')
+    # options.add_argument('--disable-gpu')
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
         print("Chrome driver found on Linux machine.")
@@ -163,12 +163,16 @@ def run_checker(user, passwd):
         adv_total = 0
         adv_earned = 0
         commit_id = "N/A"
+        max_width = 103
 
-    # Check running tests, going through each task
+        # Check the results
+        print()
         for count in range(0, len(task_box)):
-            print(task_card[count].find_element_by_class_name("panel-title").text, end='     ')
+            task_name = task_card[count].find_element_by_class_name("panel-title").text
             task_type = task_card[count].find_element_by_class_name("label").text
-            print("*"+task_type.upper()+"*")
+            print("-" * max_width)
+            print("| " + task_name + (" " * (max_width-len(task_name)-len(task_type)-4)) + task_type.upper()+" |")
+            print("-" * max_width)
             check_code_button[count].click()
             try:
                 wait.until(EC.visibility_of(start_test_button[count]))
@@ -183,7 +187,7 @@ def run_checker(user, passwd):
             total_temp = 0
             earned_temp = 0
             check_mark = "[+]"
-            x_mark = "[-]"
+            x_mark = "[ ]"
     # Going throught each check in the task
             # Requirement Checks
             for num in range(0, len(req_box)):
@@ -191,9 +195,11 @@ def run_checker(user, passwd):
                 class_names = req_box[num].get_attribute("class")
                 if "success" in class_names:
                     earned_temp += 1
-                    print("{}:{}  ".format(req_box[num].text, check_mark), end='')
+                    output_text = "{}:{}  ".format(req_box[num].text, check_mark)
+                    print(output_text, end='')
                 elif "fail" in class_names:
-                    print("{}:{}  ".format(req_box[num].text, x_mark), end='')
+                    output_text = "{}:{}  ".format(req_box[num].text, x_mark)
+                    print(output_text, end='')
                 else:
                     print("unknown")
             if total_temp > 0:
@@ -204,9 +210,11 @@ def run_checker(user, passwd):
                 class_names = check_box[num].get_attribute("class")
                 if "success" in class_names:
                     earned_temp += 1
-                    print("{}:{}  ".format(check_box[num].text, check_mark), end='')
+                    output_text = "{}:{}  ".format(check_box[num].text, check_mark)
+                    print(output_text, end='')
                 elif "fail" in class_names:
-                    print("{}:{}  ".format(check_box[num].text, x_mark), end='')
+                    output_text = "{}:{}  ".format(check_box[num].text, x_mark)
+                    print(output_text, end='')
                 else:
                     print("unknown")
             if total_temp > 0:
@@ -227,7 +235,7 @@ def run_checker(user, passwd):
             wait.until(EC.invisibility_of_element(close_button))
         print("Mandatory: {}/{}".format(man_earned, man_total))
         print("Advanced: {}/{}".format(adv_earned, adv_total))
-        print("Check: {:d}/{:d}".format(man_earned + adv_earned, man_total + adv_total))
+        print("Total: {:d}/{:d}".format(man_earned + adv_earned, man_total + adv_total))
         print("Used commit id: " + commit_id)
         # print("grades")
 
