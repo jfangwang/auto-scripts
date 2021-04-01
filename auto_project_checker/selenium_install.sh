@@ -1,10 +1,10 @@
 echo "-------------------"
 echo "Installing Selenium"
 echo "-------------------"
+sudo apt-get update
+sudo apt-get -y install python3-pip
 sudo pip3 install selenium
 
-# apt-get update
-sudo apt-get update
 echo "------------------------------"
 echo "Installing Java, Chrome-stable"
 echo "------------------------------"

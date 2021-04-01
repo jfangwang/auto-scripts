@@ -22,7 +22,7 @@ def run_checker(user, passwd):
     # Pathing on windows
     PATH_win = os.getcwd() + '\\chromedriver.exe'
     #Pathing on Linux
-    PATH_lin = './chromedriver'
+    PATH_lin = '/usr/local/bin/chromedriver'
     # Fetch Saved Project Number
     pre_url = "https://intranet.hbtn.io/projects/"
     pre_url2 = "http://intranet.hbtn.io/projects/"
@@ -65,8 +65,8 @@ def run_checker(user, passwd):
     URL = PROJ_NUM
     # create a new Chrome session
     options = Options()
-    # options.add_argument('--headless')
-    # options.add_argument('--disable-gpu')
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
         print("Chrome driver found on Linux machine.")
