@@ -65,7 +65,7 @@ def run_checker(user, passwd):
     URL = PROJ_NUM
     # create a new Chrome session
     options = Options()
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
         print("Chrome driver found on Linux machine.")
@@ -135,24 +135,25 @@ def run_checker(user, passwd):
     except:
         print("Could not get project name...\n")
     check_code_button = driver.find_elements_by_xpath("//button[contains(text(),'Check your code')]")
-    task_box = driver.find_elements_by_class_name("task_correction_modal")
-    task_card = driver.find_elements_by_class_name("task-card")
+    task_popup = driver.find_elements_by_class_name("task_correction_modal")
+    task_box = driver.find_elements_by_class_name("task-card")
     start_test_button = driver.find_elements_by_xpath("//button[contains(text(),'Start a new test')]")
-    wait = WebDriverWait(driver, timeout=10)
+    wait = WebDriverWait(driver, timeout=15)
 
     before_tests_time = datetime.now()
     login_time = before_tests_time - start_time
     # Check if all tasks can check code, start test, and close the task. testing...
     # ONLY WORKS IF QA REVIEW IS FULLY AUTOMATED
-    if len(check_code_button) == len(task_box) == len(start_test_button) == len(task_card):
+    if len(check_code_button) == len(task_popup) == len(start_test_button) and len(check_code_button) > 0:
+    # if len(check_code_button) == len(start_test_button):
         for count in range(0, len(start_test_button)):
             check_code_button[count].click()
             wait.until(EC.visibility_of(start_test_button[count]))
             start_test_button[count].click()
-            close_button = task_box[count].find_element_by_class_name('close')
+            close_button = task_popup[count].find_element_by_class_name('close')
             close_button.click()
             wait.until(EC.invisibility_of_element(close_button))
-            b = "Running Tests [" + "." * count + " " * (len(task_box) - count - 1) + "]"
+            b = "Running Tests [" + "." * count + " " * (len(task_popup) - count - 1) + "]"
             print(b, end="\r")
         print("\nRan {:s} tests".format(str(len(start_test_button))))
 
@@ -161,63 +162,101 @@ def run_checker(user, passwd):
         man_earned = 0
         adv_total = 0
         adv_earned = 0
-        commit_id = "N/A"
-        max_width = 103
-
+        commit_id = 0
+        col, row = os.get_terminal_size()
+        max_width = col
         # Check the results
+        # Click every task and check
         print()
-        for count in range(0, len(task_box)):
-            task_name = task_card[count].find_element_by_class_name("panel-title").text
-            task_type = task_card[count].find_element_by_class_name("label").text
+        # for count in range(0, len(check_code_button)):
+        count = 0
+        for task_count in range(0, len(task_box)):
+            new_line_count = 0
+            output_length = 0
+            task_name = task_box[task_count].find_element_by_class_name("panel-title").text
+            task_type = task_box[task_count].find_element_by_class_name("label").text
             print("-" * max_width)
             print("| " + task_name + (" " * (max_width-len(task_name)-len(task_type)-4)) + task_type.upper()+" |")
             print("-" * max_width)
+
+            # Checks if task box has a check code button
+            button_list = task_box[task_count].find_elements_by_tag_name("button")
+            has_check_code_button = False
+            for item in button_list:
+                if "Check your code" in item.text:
+                    has_check_code_button = True
+            if has_check_code_button == False:
+                sys.stdout.write("\033[F" * (new_line_count + 3))
+                print("-" * max_width)
+                notice = "   \033[5;30;43mMANUAL QA REVIEW\033[0m"
+                print("| " + task_name + notice + (" " * (max_width-len(task_name)-len(task_type)-len(notice)+14-4)) + task_type.upper()+" |")
+                print("-" * max_width)
+                continue
+
             check_code_button[count].click()
             try:
                 wait.until(EC.visibility_of(start_test_button[count]))
             except:
                 print("[DEBUG] Dipping out, checker is taking too long to load...")
                 pass
-            result_box = task_box[count].find_element_by_class_name("result")
+            result_box = task_popup[count].find_element_by_class_name("result")
             req_box = result_box.find_elements_by_class_name("requirement")
             check_box = result_box.find_elements_by_class_name("code")
-            if count == 0:
-                commit_id = result_box.find_elements_by_tag_name("code")[0].text
+            if count == commit_id:
+                try:
+                    commit_id = result_box.find_elements_by_tag_name("code")[0].text
+                except:
+                    commit_id += 1
+                    pass
             total_temp = 0
             earned_temp = 0
-            check_mark = "[+]"
-            x_mark = "[ ]"
-    # Going throught each check in the task
+            check_mark = "\033[5;30;42m"+"[+]"+"\033[0m"
+            x_mark = "\033[5;30;41m"+"[-]"+"\033[0m"
+            # Going throught each check in the task
             # Requirement Checks
+            output_length = 0
             for num in range(0, len(req_box)):
                 total_temp += 1
                 class_names = req_box[num].get_attribute("class")
                 if "success" in class_names:
                     earned_temp += 1
-                    output_text = "{}:{}  ".format(req_box[num].text, check_mark)
-                    print(output_text, end='')
+                    output_text = "{}:{} ".format(req_box[num].text, check_mark)
                 elif "fail" in class_names:
-                    output_text = "{}:{}  ".format(req_box[num].text, x_mark)
-                    print(output_text, end='')
+                    output_text = "{}:{} ".format(req_box[num].text, x_mark)
                 else:
                     print("unknown")
+                    pass
+                output_length += len(output_text) - 14
+                if output_length > max_width:
+                    print("\n")
+                    new_line_count += 1
+                    output_length = len(output_text)
+                print(output_text, end='')
             if total_temp > 0:
                 print()
+                new_line_count += 1
             # Code Checks
+            output_length = 0
             for num in range(0, len(check_box)):
                 total_temp += 1
                 class_names = check_box[num].get_attribute("class")
                 if "success" in class_names:
                     earned_temp += 1
-                    output_text = "{}:{}  ".format(check_box[num].text, check_mark)
-                    print(output_text, end='')
+                    output_text = "{}:{} ".format(check_box[num].text, check_mark)
                 elif "fail" in class_names:
-                    output_text = "{}:{}  ".format(check_box[num].text, x_mark)
-                    print(output_text, end='')
+                    output_text = "{}:{} ".format(check_box[num].text, x_mark)
                 else:
                     print("unknown")
+                    pass
+                output_length += len(output_text) - 14
+                if output_length > max_width:
+                    print()
+                    new_line_count += 1
+                    output_length = len(output_text)
+                print(output_text, end='')
             if total_temp > 0:
                 print()
+                new_line_count += 1
             if "mandatory" in task_type:
                 man_total += total_temp
                 man_earned += earned_temp
@@ -227,11 +266,17 @@ def run_checker(user, passwd):
             if earned_temp != total_temp:
                 print("**Missing {:d}**".format(total_temp - earned_temp))
             else:
-                print("All good!")
-            print()
-            close_button = task_box[count].find_element_by_class_name('close')
+                sys.stdout.write("\033[F" * (new_line_count + 3))
+                print("-" * max_width)
+                print("| \033[5;30;42m" + task_name +"\033[0m"+ (" " * (max_width-len(task_name)-len(task_type)-4)) + task_type.upper()+" |")
+                print("-" * max_width)
+            close_button = task_popup[count].find_element_by_class_name('close')
             close_button.click()
             wait.until(EC.invisibility_of_element(close_button))
+            count += 1
+        if commit_id == len(task_box):
+            commit_id = "Not Found"
+        print('\n')
         print("Mandatory: {}/{}".format(man_earned, man_total))
         print("Advanced: {}/{}".format(adv_earned, adv_total))
         print("Total: {:d}/{:d}".format(man_earned + adv_earned, man_total + adv_total))
@@ -246,8 +291,12 @@ def run_checker(user, passwd):
         # for a in range(0, len(grade_percent)):
         #     print(grade_percent[a].text)
         #     print("Project {}: {}".format(project_name[a].text, grade_percent[a].text))
-    else:
+    elif len(check_code_button) == 0:
+        print("=============================")
         print("Checker is not out yet silly.")
+        print("=============================")
+    else:
+        print("This script is unable to run this project.")
     end_time = datetime.now()
     check_tests_time = end_time - before_tests_time
     runtime = end_time - start_time
