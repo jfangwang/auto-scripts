@@ -1,7 +1,7 @@
 ![Image of auto proj](https://i.imgur.com/qywsAqI.png)
 # Welcome to Auto Project Checker
 ## What is this?
-This is a python selenium script to check the results of the checker. Instead of hitting the 'check code' button for every task, you just run this script once and that's it. This project was initially built for vagrant running on ```ubuntu 16.04 LTS distro``` but also works on Mac and PC.
+This is a python selenium script to check the results of the checker. Instead of hitting the 'check code' button for every task, you just run this script once and that's it. This project was initially built for vagrant running on ```ubuntu 16.04 LTS distro``` but also works on PC.
 ## Set up
 Everything is bundled in ```selenium_install.sh``` to keep things simple. For installation, run the file by entering in ```./selenium_install.sh``` into terminal. Enter 'y' when prompted and will take a couple minutes.
 
