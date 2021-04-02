@@ -21,10 +21,14 @@ try:
         except:
             password = input("Enter Password: ")
         try:
-            PROJ_NUM = read[2]
-            print("Found project URL")
+            PROJ_NUM = sys.argv[1]
+            print("Saved new project URL/Number")
         except:
-            PROJ_NUM = ''
+            try:
+                PROJ_NUM = read[2]
+                print("Found project URL")
+            except:
+                PROJ_NUM = ''
         with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
             f.write(username + '\n' + password + '\n' + PROJ_NUM + '\n')
 except:

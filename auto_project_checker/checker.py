@@ -297,7 +297,7 @@ def run_checker(user, passwd):
             count += 1
         if commit_id == len(task_box):
             commit_id = "Not Found"
-        print('\n')
+        print('\n\n')
         if show_score == False:
             print("\033[5;30;44mSCORES ARE NOT COMPLETE, CHECK ONLINE FOR COMPLETE SCORE\033[0m")
         print("Mandatory: {}/{}".format(man_earned, man_total))
