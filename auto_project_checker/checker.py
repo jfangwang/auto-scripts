@@ -65,7 +65,7 @@ def run_checker(user, passwd):
     URL = PROJ_NUM
     # create a new Chrome session
     options = Options()
-    # options.add_argument('--headless')
+    options.add_argument('--headless')
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
         print("Chrome driver found on Linux machine.")
