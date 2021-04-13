@@ -65,7 +65,7 @@ def run_checker(user, passwd):
     URL = PROJ_NUM
     # create a new Chrome session
     options = Options()
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
         print("Chrome driver found on Linux machine.")
@@ -103,7 +103,7 @@ def run_checker(user, passwd):
     login_button = driver.find_element_by_name("commit")
     login_button.click()
 
-    timeout = 1
+    timeout = 600
     try:
         element_present = EC.presence_of_element_located((By.CLASS_NAME, 'student-home'))
         WebDriverWait(driver, timeout).until(element_present)
@@ -137,7 +137,7 @@ def run_checker(user, passwd):
     task_box = driver.find_elements_by_class_name("task-card")
     start_test_button = driver.find_elements_by_xpath("//button[contains(text(),'Start a new test')]")
     # Change timeout(seconds) to change the wait duration for results to load from checker.
-    wait = WebDriverWait(driver, timeout=3)
+    wait = WebDriverWait(driver, timeout)
 
     before_tests_time = datetime.now()
     login_time = before_tests_time - start_time
@@ -202,9 +202,36 @@ def run_checker(user, passwd):
 
             check_code_button[count].click()
             try:
-                wait.until(EC.visibility_of(start_test_button[count]))
+                # wait.until(EC.visibility_of(start_test_button[count]))
+                ascii_animation = [
+                    '...',
+                    'o..',
+                    'Oo.',
+                    'oOo',
+                    '.oO',
+                    '..o',
+                    '...'
+                ]
+                counter = 0
+                results_loaded = False
+                wait = WebDriverWait(driver, 0.7)
+                while counter < timeout and results_loaded == False:
+                    try:
+                        wait.until(EC.visibility_of(start_test_button[count]))
+                        results_loaded = True
+                    except KeyboardInterrupt:
+                        sys.exit(1)
+                    except:
+                        for a in range(0, len(ascii_animation)):
+                            print("Checker is loading {}".format(ascii_animation[a]), end="\r")
+                            time.sleep(0.3/len(ascii_animation))
+                        new_line_count = 1
+                    counter += 1
+                if results_loaded == False:
+                    start_test_button[count].click()
             except:
                 results_loaded = False
+            wait = WebDriverWait(driver, timeout)
             result_box = task_popup[count].find_element_by_class_name("result")
             req_box = result_box.find_elements_by_class_name("requirement")
             check_box = result_box.find_elements_by_class_name("code")
@@ -216,8 +243,10 @@ def run_checker(user, passwd):
                     pass
             total_temp = 0
             earned_temp = 0
-            check_mark = "\033[5;30;42m"+"[+]"+"\033[0m"
-            x_mark = "\033[5;30;41m"+"[-]"+"\033[0m"
+            code_check_mark = "\033[5;30;42m"+"[+]"+"\033[0m"
+            code_x_mark = "\033[5;30;41m"+"[-]"+"\033[0m"
+            req_check_mark = "\033[5;32;40m"+"[+]"+"\033[0m"
+            req_x_mark = "\033[5;31;40m"+"[-]"+"\033[0m"
             # Going throught each check in the task
             # Requirement Checks
             output_length = 0
@@ -226,9 +255,9 @@ def run_checker(user, passwd):
                 class_names = req_box[num].get_attribute("class")
                 if "success" in class_names:
                     earned_temp += 1
-                    output_text = "{}:{} ".format(req_box[num].text, check_mark)
+                    output_text = "{}:{} ".format(req_box[num].text, req_check_mark)
                 elif "fail" in class_names:
-                    output_text = "{}:{} ".format(req_box[num].text, x_mark)
+                    output_text = "{}:{} ".format(req_box[num].text, req_x_mark)
                 else:
                     print("unknown")
                     pass
@@ -248,9 +277,9 @@ def run_checker(user, passwd):
                 class_names = check_box[num].get_attribute("class")
                 if "success" in class_names:
                     earned_temp += 1
-                    output_text = "{}:{} ".format(check_box[num].text, check_mark)
+                    output_text = "{}:{} ".format(check_box[num].text, code_check_mark)
                 elif "fail" in class_names:
-                    output_text = "{}:{} ".format(check_box[num].text, x_mark)
+                    output_text = "{}:{} ".format(check_box[num].text, code_x_mark)
                 else:
                     print("unknown")
                     pass
@@ -292,6 +321,7 @@ def run_checker(user, passwd):
                     print("| \033[5;30;42m" + task_name +"\033[0m"+ (" " * (max_width-len(task_name)-len(task_type)-4)) +task_type.upper()+" |")
                 print("-" * max_width)
             close_button = task_popup[count].find_element_by_class_name('close')
+            wait.until(EC.visibility_of(close_button))
             close_button.click()
             wait.until(EC.invisibility_of_element(close_button))
             count += 1
