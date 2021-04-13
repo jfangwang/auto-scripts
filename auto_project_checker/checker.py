@@ -223,7 +223,7 @@ def run_checker(user, passwd):
                         sys.exit(1)
                     except:
                         for a in range(0, len(ascii_animation)):
-                            print("Checker is loading {}".format(ascii_animation[a]), end="\r")
+                            print("Waiting for checker {}".format(ascii_animation[a]), end="\r")
                             time.sleep(0.3/len(ascii_animation))
                         new_line_count = 1
                     counter += 1
