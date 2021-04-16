@@ -1,4 +1,4 @@
-![Image of auto proj](https://i.imgur.com/qywsAqI.png)
+![Image of auto proj](https://i.imgur.com/WZNODKC.png)
 # Welcome to Auto Project Checker
 ## What is this?
 This is a python selenium script to check the results of the checker. Instead of hitting the 'check code' button for every task, you just run this script once and that's it. This project was initially built for vagrant running on ```ubuntu 16.04 LTS distro``` but also works on PC.
