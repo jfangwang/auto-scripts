@@ -7,9 +7,8 @@ This project is in a directory ```auto_project_checker``` which is part of the r
 ### Setup for Vagrant running Ubuntu
 
 1. Clone the repo: ```git clone https://github.com/jfangwang/auto-scripts.git```
-2. cd into auto-scripts repo: ```cd auto-scripts```
-3. cd into auto_project_checker: ```cd auto_project_checker```
-4. Everything is bundled in ```selenium_install.sh``` to keep things simple. For installation, run the file by entering in ```./selenium_install.sh``` into terminal. Enter 'y' when prompted and will take a couple minutes.
+2. cd into auto-scripts repo: ```cd auto-scripts/auto_project_checker```
+3. Everything is bundled in ```selenium_install.sh``` to keep things simple. For installation, run the file by entering in ```./selenium_install.sh``` into terminal. Enter 'y' when prompted and will take a couple minutes.
 
 ## Usage
 ### First run
