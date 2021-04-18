@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-import os, sys
+import os
+from sys import argv
 
 def check_credentials():
     if os.path.isfile("holberton_login.txt") is False:
@@ -95,3 +96,11 @@ def get_proj_num():
     with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
         f.write(username + '\n' + password + '\n' + proj_num + '\n')
     return proj_num
+
+def get_flags():
+    for index in range(1, len(argv)):
+        if "-" in argv[index]:
+            for letter in range(1, len(argv)):
+                if letter is 'e':
+                    return "e"
+    return "nothing"
