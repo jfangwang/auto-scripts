@@ -24,11 +24,9 @@ echo "------------------------"
 echo "Installing Chrome Driver"
 echo "------------------------"
 CHROMEDRIVER_VERSION=$(curl "http://chromedriver.storage.googleapis.com/LATEST_RELEASE")
-wget "http://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+wget "http://chromedriver.storage.googleapis.com/2.29/chromedriver_linux64.zip"
 unzip chromedriver_linux64.zip
 sudo rm chromedriver_linux64.zip
-chown vagrant:vagrant chromedriver
-sudo mv chromedriver /usr/local/bin
 export DISPLAY=:10
 
 sudo pip3 install --upgrade --ignore-installed urllib3
