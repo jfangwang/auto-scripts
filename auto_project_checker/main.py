@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from checker import run_checker
 import os, sys
+import getpass
 # Retrieving Email and Password
 substring = "@holbertonschool.com"
 flags = []
@@ -21,7 +22,7 @@ try:
             password = read[1]
             print("Found password")
         except:
-            password = input("Enter Password: ")
+            password =  getpass.getpass("Enter Password: ")
         for a in range(1, len(sys.argv)):
             if "https://intranet.hbtn.io/projects/" in sys.argv[a] or \
                 "http://intranet.hbtn.io/projects/" in sys.argv[a] or \
@@ -49,7 +50,7 @@ except:
                " prompted.\n")
     print(welcome)
     username = input("Holberton Email: ")
-    password = input("Password: ")
+    password = getpass.getpass("Password: ")
     with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
         f.write(username + '\n' + password + '\n')
 finally:

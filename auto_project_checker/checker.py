@@ -11,6 +11,7 @@ from selenium.webdriver.chrome.options import Options
 from datetime import date
 from datetime import datetime
 import time
+import getpass
 
 
 def run_checker(user, passwd, flags):
@@ -95,7 +96,7 @@ def run_checker(user, passwd, flags):
     if username == '' and password == '':
         print("Username and Password will not be saved. To save it, paste in your username and password on separate line #1 and #2 in your holberton_login.txt file")
         username = input("Enter Username: ")
-        password = input("Enter Password: ")
+        password = getpass.getpass("Password: ")
         save = False
 
     # Tracking runtime
