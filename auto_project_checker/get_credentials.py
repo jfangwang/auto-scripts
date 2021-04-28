@@ -74,6 +74,10 @@ def get_proj_num():
     username = ''
     pre_url = "https://intranet.hbtn.io/projects/"
     pre_url2 = "http://intranet.hbtn.io/projects/"
+    if len(argv) > 1:
+        for index in range(1, len(argv)):
+            if argv[index].isdecimal():
+                return argv[index]
     if check_credentials() == True:
         with open("holberton_login.txt", mode='r', encoding='utf-8') as openfile:
             read = openfile.read().splitlines()
