@@ -227,7 +227,10 @@ def run_checker(user, passwd, flags):
                 else:
                     print("| \033[5;30;42m" + task_name +"\033[0m"+ (" " * (max_width-len(task_name)-len(task_type)-4)) +task_type.upper()+" |")
                 print("-" * max_width)
-                commit_id += 1
+                try:
+                    commit_id += 1
+                except:
+                    pass
                 continue
             check_code_button[task_count].click()
 
