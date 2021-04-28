@@ -100,7 +100,7 @@ def get_proj_num():
 def get_flags():
     for index in range(1, len(argv)):
         if "-" in argv[index]:
-            for letter in range(1, len(argv)):
-                if letter is 'e':
+            for letter in argv[index]:
+                if "e" in letter:
                     return "e"
     return "nothing"

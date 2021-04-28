@@ -24,10 +24,11 @@ options = Options()
 options.add_experimental_option("detach", True)
 options.add_argument('log-level=3')
 save = True
+check_every_task = False
 # Check Flags
-if get_flags() == 'c':
+if get_flags() == 'e':
+    print("Flag e received, checking every task")
     check_every_task = True
-
 
 if os.path.isfile("session_info.txt") is False:
     try:
@@ -138,15 +139,15 @@ else:
 # Chrome session is running
 
 # Disable CSS Animations
-driver.execute_script("const styleElement = document.createElement('style');\
-    styleElement.setAttribute('id','style-tag');\
-    const styleTagCSSes = document.createTextNode('*,:after,:before{-webkit-t\
-    ransition:none!important;-moz-transition:none!important;-ms-transition:no\
-    ne!important;-o-transition:none!important;transition:none!important;-webk\
-    t-transform:none!important;-moz-transform:none!important;-ms-transform:no\
-    ne!important;-o-transform:none!important;transform:none!important}');\
-    styleElement.appendChild(styleTagCSSes);document.head.appendChild\
-    (styleElement);")
+# driver.execute_script("const styleElement = document.createElement('style');\
+#     styleElement.setAttribute('id','style-tag');\
+#     const styleTagCSSes = document.createTextNode('*,:after,:before{-webkit-t\
+#     ransition:none!important;-moz-transition:none!important;-ms-transition:no\
+#     ne!important;-o-transition:none!important;transition:none!important;-webk\
+#     t-transform:none!important;-moz-transform:none!important;-ms-transform:no\
+#     ne!important;-o-transform:none!important;transform:none!important}');\
+#     styleElement.appendChild(styleTagCSSes);document.head.appendChild\
+#     (styleElement);")
 
 # Tracking runtime
 start_time = datetime.now()
@@ -163,7 +164,6 @@ wait = WebDriverWait(driver, timeout)
 before_tests_time = datetime.now()
 login_time = before_tests_time - start_time
 clicked_check_code_button = 0
-check_every_task = False
 
 # Check if all tasks can check code, start test, and close the task.
 if len(check_code_button) == len(task_popup) == len(start_test_button) and len(check_code_button) > 0:
@@ -250,7 +250,10 @@ if len(check_code_button) == len(task_popup) == len(start_test_button) and len(c
                       (max_width - len(task_name) - len(task_type) - 4)) +
                       task_type.upper() + " |")
             print("-" * max_width)
-            commit_id += 1
+            try:
+                commit_id += 1
+            except:
+                pass
             continue
         check_code_button[task_count].click()
 
