@@ -102,9 +102,27 @@ def get_proj_num():
     return proj_num
 
 def get_flags():
+    flag_dict = []
     for index in range(1, len(argv)):
         if "-" in argv[index]:
-            for letter in argv[index]:
-                if "e" in letter:
-                    return "e"
-    return "nothing"
+            for l_idx in range(0, len(argv[index])):
+                if "e" in argv[index][l_idx]:
+                    flag_dict.append("e")
+    return flag_dict
+
+def get_files_changed():
+    """Gets which files were changed"""
+    files_list = []
+    test = os.popen('git show --name-only')
+    repo_location = os.popen('git rev-parse --show-toplevel')
+    repo_location = repo_location.readlines()
+    repo_location = repo_location[0]
+    repo_location = repo_location.replace('\n', '')
+    if "Not a git repository" in repo_location:
+        files_list.append("Not a git repository")
+        return files_list
+    files_list.append(repo_location.split('/')[-1])
+    output = test.readlines()
+    for a in range(6, len(output)):
+        files_list.append(output[a].replace('\n', ''))
+    return files_list
