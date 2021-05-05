@@ -3,9 +3,11 @@ import os
 from sys import argv
 import getpass
 
+file_path = "/etc/hbchecker.txt"
+
 def check_credentials():
-    if os.path.isfile("holberton_login.txt") is False:
-        with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
+    if os.path.isfile(file_path) is False:
+        with open(file_path, mode='w', encoding='utf-8') as f:
             f.write('')
         welcome = ("\nWelcome to auto project checker! Project was created so you"
                 " can run the checker without clicking the 'Check code button'"
@@ -25,7 +27,7 @@ def get_username():
     proj_num = ''
     substring = "@holbertonschool.com"
     if check_credentials() == True:
-        with open("holberton_login.txt", mode='r', encoding='utf-8') as openfile:
+        with open(file_path, mode='r', encoding='utf-8') as openfile:
             read = openfile.read().splitlines()
             try:
                 username = read[0]
@@ -44,7 +46,7 @@ def get_username():
                 username = input("Enter Holberton Email: ")
     else:
         username = input("Enter Holberton Email: ")
-    with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
+    with open(file_path, mode='w', encoding='utf-8') as f:
         f.write(username + '\n' + password + '\n' + proj_num + '\n')
     return username
 
@@ -52,7 +54,7 @@ def get_password():
     username = ''
     proj_num = ''
     if check_credentials() == True:
-        with open("holberton_login.txt", mode='r', encoding='utf-8') as openfile:
+        with open(file_path, mode='r', encoding='utf-8') as openfile:
             read = openfile.read().splitlines()
             try:
                 password = read[1]
@@ -69,7 +71,7 @@ def get_password():
                 password =  getpass.getpass("Enter Password: ")
     else:
         password = getpass.getpass("Enter Password: ")
-    with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
+    with open(file_path, mode='w', encoding='utf-8') as f:
         f.write(username + '\n' + password + '\n' + proj_num + '\n')
     return password
 
@@ -83,7 +85,7 @@ def get_proj_num():
             if argv[index].isdecimal():
                 return argv[index]
     if check_credentials() == True:
-        with open("holberton_login.txt", mode='r', encoding='utf-8') as openfile:
+        with open(file_path, mode='r', encoding='utf-8') as openfile:
             read = openfile.read().splitlines()
             try:
                 proj_num = read[2]
@@ -101,7 +103,7 @@ def get_proj_num():
                 proj_num = input("Enter project URL or number: ")
     else:
         password = input("Enter project URL or number: ")
-    with open("holberton_login.txt", mode='w', encoding='utf-8') as f:
+    with open(file_path, mode='w', encoding='utf-8') as f:
         f.write(username + '\n' + password + '\n' + proj_num + '\n')
     return proj_num
 
