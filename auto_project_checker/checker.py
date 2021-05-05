@@ -80,6 +80,8 @@ def run_checker(user, passwd, flags, files):
     # create a new Chrome session
     options = Options()
     options.add_argument('--headless')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--no-sandbox')
     driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
