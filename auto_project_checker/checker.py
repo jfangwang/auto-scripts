@@ -10,11 +10,12 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from datetime import date
 from datetime import datetime
+from helper_functions import *
 import time
 import getpass
 
 
-def run_checker(user, passwd, flags):
+def run_checker(user, passwd, flags, files):
     # Credentials
     username = user
     password = passwd
@@ -30,6 +31,8 @@ def run_checker(user, passwd, flags):
     PROJ_NUM = ''
     save = True
     check_every_task = False
+    check_files_changed = False
+    os_sys = "idk"
     # Open holberton_login.txt and get user/pass
     try:
         with open("holberton_login.txt", mode='r', encoding='utf-8') as f:
@@ -66,9 +69,12 @@ def run_checker(user, passwd, flags):
 
     # Flags to run
     for a in flags:
-        if "-e" in a:
+        if "e" in a:
             check_every_task = True
             print("-e flag: Checking every task with the checker")
+        elif "f" in a:
+            check_files_changed = True
+            print("-f flag: Only checking tasks contiaining files you changed")
     HOME = "https://intranet.hbtn.io/"
     URL = PROJ_NUM
     # create a new Chrome session
@@ -77,10 +83,12 @@ def run_checker(user, passwd, flags):
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
         print("Chrome driver found on Linux machine.")
+        os_sys = 'lin'
     except:
         try:
             driver = webdriver.Chrome(executable_path=PATH_win, chrome_options=options)
             print("Chrome driver found on Windows machine")
+            os_sys = 'win'
         except:
             print("Check if chromedriver or chromedriver.exe is in this directory")
             exit(1)
@@ -166,7 +174,7 @@ def run_checker(user, passwd, flags):
             close_button = task_popup[count].find_element_by_class_name('close')
             close_button.click()
             wait.until(EC.invisibility_of_element(close_button))
-            b = "Starting tests [" + "." * count + " " * (len(task_popup) - count - 1) + "]"
+            b = "Starting tests [." + "." * count + " " * (len(task_popup) - count - 1) + "]"
             print(b, end="\r")
         print("\nClicked {:s} buttons".format(str(clicked_check_code_button)))
 
@@ -190,7 +198,25 @@ def run_checker(user, passwd, flags):
             results_loaded = True
             task_name = task_box[task_count].find_element_by_class_name("panel-title").text
             task_type = task_box[task_count].find_element_by_class_name("label").text
+            files_needed = task_box[task_count].find_element_by_class_name("list-group-item")
+            files_required = files_needed.find_elements_by_tag_name('li')
             start_task_time = datetime.now()
+            git_repo = "idk"
+            git_dir = "idk"
+            git_files = []
+            temp = []
+            check_task = False
+
+            # Gets the repo, dir, and files required for the task
+            for a in files_required:
+                if 'GitHub repository' in a.text:
+                    git_repo = a.text.replace('GitHub repository: ', '')
+                if 'Directory' in a.text:
+                    git_dir = a.text.replace('Directory: ', '')
+                if 'File' in a.text:
+                    temp = a.text.replace('File: ', '').split(",")
+                    for a in temp:
+                        git_files.append(a.replace(' ', ''))
 
             # Print the Task Name
             print("-" * max_width)
@@ -232,6 +258,21 @@ def run_checker(user, passwd, flags):
                 except:
                     pass
                 continue
+
+            # Check if user's task files are recently pushed to git
+            # and needs to be checked. It only accounts for spefic files, not
+            # directories as of now.
+            if check_files_changed == True:
+                for user_files in get_files_changed()[1:]:
+                    for req_files in git_files:
+                        # print("req_files: " + req_files)
+                        # print("user_files: " + user_files)
+                        print()
+                        if req_files in user_files:
+                            check_task = True
+            if check_task == False and check_every_task == False:
+                continue
+
             check_code_button[task_count].click()
 
             # wait for the results to load
