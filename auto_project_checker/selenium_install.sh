@@ -30,5 +30,15 @@ sudo rm chromedriver_linux64.zip
 chown vagrant:vagrant chromedriver
 sudo mv chromedriver /usr/local/bin
 export DISPLAY=:10
-
 sudo pip3 install --upgrade --ignore-installed urllib3
+
+echo "-----------------------"
+echo "Configuring Bashrc File"
+echo "-----------------------"
+hbchecker=hbchecker.py:run
+pip3 install -e $(pwd)
+~/.bashrc >> alias hbchecker='sudo hbchecker'
+~/.bashrc >> alias push='git push && sudo hbchecker'
+echo "-----------------------"
+echo "INSTALLATION COMPLETE!!"
+echo "-----------------------"
