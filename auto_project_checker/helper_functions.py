@@ -4,6 +4,7 @@ from sys import argv
 from getpass import getpass
 
 file_path = "/etc/hbchecker.txt"
+# file_path = "hbchecker.txt"
 email = "@holbertonschool.com"
 credentials = []
 

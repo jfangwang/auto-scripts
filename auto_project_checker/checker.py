@@ -17,7 +17,8 @@ from getpass import getpass
 
 def run_checker():
     # Credentials
-    file_path = '/etc/hbchecker.txt'
+    file_path = "/etc/hbchecker.txt"
+    # file_path = "hbchecker.txt"
     credentials = get_credentials()
     if credentials == 1:
         exit(1)
@@ -59,7 +60,7 @@ def run_checker():
     options.add_argument('--headless')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--no-sandbox')
-    driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
+    # driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
     try:
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
         print("Chrome driver found on Linux machine.")
@@ -136,7 +137,7 @@ def run_checker():
     if len(check_code_button) == len(task_popup) == len(start_test_button) and len(check_code_button) > 0:
         # Click every task and check results
         for count in range(0, len(start_test_button)):
-            task_name = task_box[task_count].find_element_by_class_name("panel-title").text
+            task_name = task_box[count].find_element_by_class_name("panel-title").text
             files_needed = task_box[count].find_element_by_class_name("list-group-item")
             files_required = files_needed.find_elements_by_tag_name('li')
             git_repo = "idk"
@@ -154,6 +155,15 @@ def run_checker():
                     temp = a.text.replace('File: ', '').split(",")
                     for a in temp:
                         git_files.append(a.replace(' ', ''))
+
+            # Checks if task box has a check code button
+            button_list = task_box[count].find_elements_by_tag_name("button")
+            has_check_code_button = False
+            task_completed = False
+            for item in button_list:
+                if "Check your code" in item.text:
+                    has_check_code_button = True
+                    button_count += 1
             
             # f Flag enabled: Run the test if user's file has been changed
             # in this task.
@@ -166,19 +176,13 @@ def run_checker():
                     continue
             
             # Don't start test if already completed
-            button_list = task_box[count].find_elements_by_tag_name("button")
             if "Done" in button_list[0].text and\
                "yes" in button_list[0].get_attribute("class") and\
                check_every_task == False:
                 continue
             
-            # Checks if task box has a check code button
-            has_check_code_button = False
-            task_completed = False
-            for item in button_list:
-                if "Check your code" in item.text:
-                    has_check_code_button = True
             if has_check_code_button:
+                button_count = button_count - 1
                 button_list = task_box[button_count].find_elements_by_tag_name("button")
                 check_code_button[button_count].click()
                 clicked_check_code_button += 1
@@ -189,7 +193,7 @@ def run_checker():
                 wait.until(EC.invisibility_of_element(close_button))
                 b = "Starting tests [." + "." * count + " " * (len(task_popup) - count - 1) + "]"
                 print(b, end="\r")
-                button_count += 1
+                button_count = button_count + 1
         print("\nClicked {:s} buttons".format(str(clicked_check_code_button)))
 
         # Setting up important variables
