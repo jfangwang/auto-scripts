@@ -20,27 +20,27 @@ Arguments are optional. On the first run, login credentials and project url is a
 .SH EXAMPLES
 .br
 .TP
-hbchecker
+.B hbchecker
     This will login into holberton with saved credentials and project number. By default, hbchecker will only check tasks that are not complete and verified by the checker. If all tasks are completed, hbchecker will use the results of the previous checker results.
 .br
 .br
 .TP
-hbchecker 212
+.B hbchecker 212
     To change projects, add an argument containing a project number. This example will check project '0x00. C - Hello, World'
 .br
 .br
 .TP
-hbchecker https://intranet.hbtn.io/projects/212
+.B hbchecker https://intranet.hbtn.io/projects/212
     URLs also works with hbchecker to change projects.
 .br
 .br
 .TP
-hbchecker -e https://intranet.hbtn.io/projects/212
+.B hbchecker -e https://intranet.hbtn.io/projects/212
     This will request a new checker test on all task in the project '0x00. C - Hello, World'.
 .br
 .br
 .TP
-hbchecker -f https://intranet.hbtn.io/projects/212
+.B hbchecker -f https://intranet.hbtn.io/projects/212
     This will check which files were pushed and will know which tasks to run that have been affected by this change.
 .SH AUTHORS
 Jonny Wang, NHV Cohort #13

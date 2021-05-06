@@ -17,7 +17,7 @@ from getpass import getpass
 
 def run_checker():
     # Credentials
-    # file_path = "/etc/hbchecker.txt"
+    file_path = "/etc/hbchecker.txt"
     credentials = get_credentials()
     if credentials == 1:
         exit(1)
@@ -181,7 +181,6 @@ def run_checker():
                "yes" in button_list[0].get_attribute("class") and\
                check_every_task == False and check_task == False:
                 continue
-            print("testingg")
             if has_check_code_button:
                 button_count = button_count - 1
                 button_list = task_box[button_count].find_elements_by_tag_name("button")
