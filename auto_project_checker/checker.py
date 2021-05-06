@@ -17,8 +17,7 @@ from getpass import getpass
 
 def run_checker():
     # Credentials
-    file_path = "/etc/hbchecker.txt"
-    # file_path = "hbchecker.txt"
+    # file_path = "/etc/hbchecker.txt"
     credentials = get_credentials()
     if credentials == 1:
         exit(1)
@@ -56,17 +55,19 @@ def run_checker():
     HOME = "https://intranet.hbtn.io/"
     URL = PROJ_NUM
     # create a new Chrome session
-    options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--no-sandbox')
     # driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
     try:
+        options = Options()
+        options.add_argument('--headless')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--no-sandbox')
         driver = webdriver.Chrome(executable_path=PATH_lin, chrome_options=options)
         print("Chrome driver found on Linux machine.")
         os_sys = 'lin'
     except:
         try:
+            options = Options()
+            options.add_argument('--no-sandbox')
             driver = webdriver.Chrome(executable_path=PATH_win, chrome_options=options)
             print("Chrome driver found on Windows machine")
             os_sys = 'win'
@@ -178,9 +179,9 @@ def run_checker():
             # Don't start test if already completed
             if "Done" in button_list[0].text and\
                "yes" in button_list[0].get_attribute("class") and\
-               check_every_task == False:
+               check_every_task == False and check_task == False:
                 continue
-            
+            print("testingg")
             if has_check_code_button:
                 button_count = button_count - 1
                 button_list = task_box[button_count].find_elements_by_tag_name("button")
@@ -273,7 +274,7 @@ def run_checker():
                 continue
  
             # Don't check if task is completed
-            if task_completed == True:
+            if task_completed == True and check_task == False:
                 # sys.stdout.write("\033[F" * (new_line_count + 3))
                 print("-" * max_width)
                 if "advanced" in task_type:
