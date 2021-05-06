@@ -1,122 +1,124 @@
 #!/usr/bin/python3
 import os
 from sys import argv
-import getpass
+from getpass import getpass
 
 file_path = "/etc/hbchecker.txt"
+email = "@holbertonschool.com"
+credentials = []
 
 def check_credentials():
     if os.path.isfile(file_path) is False:
-        with open(file_path, mode='w', encoding='utf-8') as f:
-            f.write('')
-        welcome = ("\nWelcome to auto project checker! Project was created so you"
-                " can run the checker without clicking the 'Check code button'"
-                " everytime. You have the option to enter your holberton crede"
-                "ntials which will be saved in another file named 'holberton_l"
-                "ogin.txt'. As long as this file exists at the root directory,"
-                " you should be good to go running this script. If you DO NOT "
-                "want your credentials saved, just press enter when"
-                " prompted.\n")
-        print(welcome)
         return False
     else:
         return True
-def get_username():
-    """reads from holberton_login"""
+
+def get_credentials():
+    username = ''
     password = ''
     proj_num = ''
-    substring = "@holbertonschool.com"
-    if check_credentials() == True:
-        with open(file_path, mode='r', encoding='utf-8') as openfile:
-            read = openfile.read().splitlines()
-            try:
-                username = read[0]
-                print("Found username")
-                try:
-                    password = read[1]
-                    proj_num = read[2]
-                except:
-                    pass
-                if substring not in username and username != '':
-                    print("Invalid Username")
-                    username = input("Enter Holberton Email: ")
-                else:
-                    print("Found username")
-            except:
-                username = input("Enter Holberton Email: ")
-    else:
-        username = input("Enter Holberton Email: ")
-    with open(file_path, mode='w', encoding='utf-8') as f:
-        f.write(username + '\n' + password + '\n' + proj_num + '\n')
-    return username
+    tries = 0
+    if check_credentials() == False:
+        welcome = ("\nWelcome to auto project checker! Project was created so you"
+                " can run the checker without clicking the 'Check code button'"
+                " everytime. You have the option to enter your holberton crede"
+                "ntials which will be saved in '/etc/hbchecker.txt'. As long as "
+                "this file exists, you should be good to go running this script."
+                " prompted.\n\nType 'man hbchecker' for more information.")
+        print(welcome)
 
-def get_password():
-    username = ''
-    proj_num = ''
-    if check_credentials() == True:
-        with open(file_path, mode='r', encoding='utf-8') as openfile:
-            read = openfile.read().splitlines()
-            try:
-                password = read[1]
-                if password == '':
-                   password =  getpass.getpass("Enter Password: ")
-                else:
-                    print("Found password")
-                try:
-                    username = read[0]
-                    proj_num = read[2]
-                except:
-                    pass
-            except:
-                password =  getpass.getpass("Enter Password: ")
-    else:
-        password = getpass.getpass("Enter Password: ")
-    with open(file_path, mode='w', encoding='utf-8') as f:
-        f.write(username + '\n' + password + '\n' + proj_num + '\n')
-    return password
-
-def get_proj_num():
-    password = ''
-    username = ''
-    pre_url = "https://intranet.hbtn.io/projects/"
-    pre_url2 = "http://intranet.hbtn.io/projects/"
-    if len(argv) > 1:
+        username = input("Holberton email: ")
+        while email not in username and tries <= 2:
+            print("Email not recognized, try again")
+            username = input("Holberton email: ")
+            tries += 1
+        if email not in username:
+            print("Exiting script, email did not end in '@holbertonschool.com'.")
+            return 1
+        password = getpass("Password: ")
+        
+        # Check argv for proj num
         for index in range(1, len(argv)):
             if argv[index].isdecimal():
-                return argv[index]
-    if check_credentials() == True:
+                proj_num = argv[index]
+        if proj_num == '':
+            proj_num = input("Project URL or number: ")
+            while proj_num == '' and 'https://intranet.hbtn.io/projects/' not in proj_num and\
+                  'http://intranet.hbtn.io/projects/' not in proj_num or\
+                  not proj_num.isdecimal():
+                print(proj_num)
+                print("Ex: 'http://intranet.hbtn.io/projects/212' or '212'")
+                proj_num = input("Project URL or number: ")
+        if proj_num.isdecimal():
+            proj_num = 'http://intranet.hbtn.io/projects/' + proj_num
+        with open(file_path, mode='w', encoding='utf-8') as f:
+            f.write(username + '\n' + password + '\n' + proj_num)
+        print("Credentials saved to file!")
+        credentials.append(username)
+        credentials.append(password)
+        credentials.append(proj_num)
+        return credentials
+    else:
+        # Parse throught hbchecker.txt to get credentials
         with open(file_path, mode='r', encoding='utf-8') as openfile:
             read = openfile.read().splitlines()
             try:
-                proj_num = read[2]
-                if pre_url in proj_num or pre_url2 in proj_num:
-                    proj_num = proj_num.split("/")[-1]
-                    print("Found project URL")
-                elif proj_num == '':
-                    proj_num = input("Enter project URL or number: ")
-                try:
+                if email not in read[0]:
+                    username = input("Holberton email: ")
+                    while email not in username and tries <= 2:
+                        print("Email not recognized, try again")
+                        username = input("Holberton email: ")
+                        tries += 1
+                    if email not in username:
+                        print("Exiting script, email did not end in '@holbertonschool.com'.")
+                        return 1
+                else:
                     username = read[0]
+                if read[1] == '':
+                    password = getpass("Password: ")
+                else:
                     password = read[1]
-                except:
-                    pass
+                proj_num = read[2]
+                for index in range(1, len(argv)):
+                    if argv[index].isdecimal():
+                        proj_num = argv[index]
+                        print("proj_num changed: "+proj_num)
+                if proj_num != '' and 'https://intranet.hbtn.io/projects/' not in proj_num and\
+                   'http://intranet.hbtn.io/projects/' not in proj_num and\
+                   not proj_num.isdecimal():
+                    proj_num = input("Project URL or number: ")
+                    while proj_num == '' and 'https://intranet.hbtn.io/projects/' not in proj_num and\
+                          'http://intranet.hbtn.io/projects/' not in proj_num or\
+                          not proj_num.isdecimal():
+                        print(proj_num)
+                        print("Ex: 'http://intranet.hbtn.io/projects/212' or '212'")
+                        proj_num = input("Project URL or number: ")
+                if proj_num.isdecimal():
+                    proj_num = 'http://intranet.hbtn.io/projects/' + proj_num
+                with open(file_path, mode='w', encoding='utf-8') as f:
+                    f.write(username + '\n' + password + '\n' + proj_num)
+                print("Credentials loaded from saved file")
+                credentials.append(username)
+                credentials.append(password)
+                credentials.append(proj_num)
+                return credentials
             except:
-                proj_num = input("Enter project URL or number: ")
-    else:
-        password = input("Enter project URL or number: ")
-    with open(file_path, mode='w', encoding='utf-8') as f:
-        f.write(username + '\n' + password + '\n' + proj_num + '\n')
-    return proj_num
+                os.remove(file_path)
+                print("File not formatted correctly, removing and starting fresh again.")
+                return 2
+    print("File not formatted correctly, removing and starting fresh again.")
+    return 2
 
 def get_flags():
-    flag_list = []
+    flag_dict = {'check_every_task': False, 'check_files_changed': False}
     for index in range(1, len(argv)):
         if "-" in argv[index]:
             for l_idx in range(0, len(argv[index])):
                 if "e" in argv[index][l_idx]:
-                    flag_list.append("e")
+                    flag_dict['check_every_task'] = True
                 if "f" in argv[index][l_idx]:
-                    flag_list.append("f")
-    return flag_list
+                    flag_dict['check_files_changed'] = True
+    return flag_dict
 
 def get_files_changed():
     """Gets which files were changed"""
