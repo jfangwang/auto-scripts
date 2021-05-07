@@ -1,52 +1,34 @@
-.\" Manpage for hbchecker
-.\" Contact Google.com for more information
-.TH hbchecker 1 "05/06/2021" "1.0" "hbchecker man page
+
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH HBCHECKER 1 "MAY 06" Linux "HBCHECKER"
 .SH NAME
 hbchecker \- A Holberton School checker tool that checks your progress on any given project and prints out the results inside the terminal.
 .SH SYNOPSIS
-hbchecker [-e] [-f] [PROJECT URL/NUMBER]
+.B hbchecker [-e] [-f] [
+project number
+.B ]
 .SH DESCRIPTION
-Arguments are optional. On the first run, login credentials and project url is asked. This will be saved for future use.
+.B hbchecker
+will skip tasks that have been marked as done by the checker to reduce time.
 .SH OPTIONS
-.br
--e
+
+.B -e
+.br 
     Clicks 'Start Test' button and checks the results on every task verifying your grade before the deadline.
 .br
 .br
--f
+.B -f
+.br
     Any files that are pushed to the project repo will be checked against the checker. hbchecker will only print out selected results based off the user's latest push and know which tasks to check for. If none of the files pushed to git are required by no task, nothing will show up.
 .br
-.br
-.SH EXAMPLES
-.br
-.TP
-.B hbchecker
-    This will login into holberton with saved credentials and project number. By default, hbchecker will only check tasks that are not complete and verified by the checker. If all tasks are completed, hbchecker will use the results of the previous checker results.
-.br
-.br
-.TP
-.B hbchecker 212
-    To change projects, add an argument containing a project number. This example will check project '0x00. C - Hello, World'
-.br
-.br
-.TP
-.B hbchecker https://intranet.hbtn.io/projects/212
-    URLs also works with hbchecker to change projects.
-.br
-.br
-.TP
-.B hbchecker -e https://intranet.hbtn.io/projects/212
-    This will request a new checker test on all task in the project '0x00. C - Hello, World'.
-.br
-.br
-.TP
-.B hbchecker -f https://intranet.hbtn.io/projects/212
-    This will check which files were pushed and will know which tasks to run that have been affected by this change.
-.SH AUTHORS
-Jonny Wang, NHV Cohort #13
-.SH REPORTING BUGS
-Report bugs at https://support.holbertonschool.com/hc/en-us/requests/new
-.SH COPYRIGHT
-Free to anyone with our hearts
-.SH SEE ALSO
-Google.com, https://www.youtube.com/watch?v=5qjnDd1rsII, did this for fun
+.SH FILES
+.I /etc/hbchecker.txt
+.RS
+File containing credentials to your login
+.SH AUTHOR
+Jonny Wang from NHV Cohort #13
+.SH "SEE ALSO"
+.BR push (1),
+.BR https://www.youtube.com/watch?v=5qjnDd1rsII
